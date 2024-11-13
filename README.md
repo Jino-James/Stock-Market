@@ -24,7 +24,7 @@ plt.show()
 ```
 ### Results
 
-![Stock Market](Images\Stock_Market.png)
+![Stock Market](Images/Stock_Market.png)
 
 ### Key Insights
 
