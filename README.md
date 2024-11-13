@@ -158,3 +158,144 @@ plt.show()
 
 The correlation analysis reveals that INFY and TCS have a strong positive correlation (0.71), indicating they tend to move together, which may limit diversification benefits if both are held in the same portfolio. HDFCBANK shows a moderate correlation with RELIANCE (0.37), suggesting some shared movement, while its low correlations with INFY (0.17) and TCS (0.10) indicate potential for risk reduction when combined with these stocks. Similarly, RELIANCE has low correlations with INFY (0.19) and TCS (0.13), supporting diversification. Overall, including stocks with lower correlations, like HDFCBANK and RELIANCE with INFY and TCS, can help lower portfolio volatility.
 
+
+### Expected Returns and Volatility for Each Stock
+Calculating expected returns and volatility for each stock is crucial in portfolio analysis because it helps in assessing the potential performance and risk of individual stocks. Expected returns provide insight into the anticipated growth, while volatility measures the stock’s price fluctuations. In a portfolio context, understanding these metrics allows for optimizing asset allocation, balancing risk, and maximizing returns based on the investor’s risk tolerance and objectives
+
+#### Code
+``` python
+expected_returns = daily_returns.mean()*252
+volatility = daily_returns.std() * np.sqrt(252)
+
+stock_stats = pd.DataFrame({
+    'Expected Return': expected_returns,
+    'Volatility': volatility
+})
+
+stock_stats
+```
+#### Results
+
+|**Ticker**|  **Expected Return** | **Volatility**|
+|----------|----------|----------|
+| HDFCBANK.NS | 0.013661 | 0.206910 |
+|INFY.NS | 0.213798 | 0.232261|
+| RELIANCE.NS	| 0.297343 | 0.214664 |
+| TCS.NS	 | 0.220852 | 0.196869 |
+
+#### Key Insights
+
+Reliance offers the highest expected return (29.73%) with moderate volatility (21.47%), presenting a high-reward, higher-risk investment. INFY and TCS also show strong returns (21.38% and 22.09%) but with slightly higher volatility (23.23% and 19.69%), indicating balanced risk and reward. HDFCBANK, with the lowest expected return (1.37%) and moderate volatility (20.69%), appears less attractive in terms of risk-adjusted returns.
+
+### Random Portfolios and Plotting the efficient frontier
+
+Generating random portfolios and plotting the efficient frontier helps in identifying the optimal risk-return trade-off in a portfolio. By simulating various combinations of asset weights, we can visualize how different portfolios perform and find the one that offers the highest expected return for a given level of risk (or vice versa). This is crucial for optimizing a portfolio, as it aids in selecting the best possible asset allocation that aligns with the investor's risk tolerance and return goals.
+
+### Code
+
+``` python
+def portfolio_performance(weights, returns, cov_matrix):
+    portfolio_return = np.dot(weights, returns)
+    portfolio_volatality = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+    return portfolio_return, portfolio_volatality
+
+num_portfolios = 10000
+
+results = np.zeros((3, num_portfolios))
+
+cov_matrix = daily_returns.cov() * 252
+
+np.random.seed(42)
+
+for i in range(num_portfolios):
+    weights = np.random.random(len(df_tickers))
+    weights /= np.sum(weights)
+
+    portfolio_return, portfolio_volatility = portfolio_performance(weights, expected_returns,cov_matrix)
+
+    results[0,i] = portfolio_return
+    results[1,i] = portfolio_volatility
+    results[2,i] = portfolio_return/portfolio_volatility
+
+plt.figure(figsize=(10,7))
+plt.scatter(results[1,:], results[0,:], c= results[2,:], cmap='YlGnBu', marker='o' )
+plt.title('Efficient Frontier')
+plt.xlabel('Volatility (Standard Deviation)')
+plt.ylabel('Expected Return')
+plt.colorbar(label='Sharpe Ratio')
+plt.grid(True)
+plt.show()
+```
+
+#### Results
+![Efficient Frontier](Images/Effecient.png)
+
+#### Key Insights
+
+In this plot, each dot represents a portfolio, with the color indicating the Sharpe ratio, a key measure of risk-adjusted returns. Portfolios on the leftmost edge of the efficient frontier, near the y-axis, deliver the highest expected returns for a given level of volatility, representing optimal portfolios. The gradient indicates that portfolios with darker blue shades (higher Sharpe ratios) provide better risk-adjusted returns, highlighting the most efficient investment choices for balancing risk and reward.
+
+### Identifying the Portfolio with the maximum Sharpe Ratio
+
+The portfolio with the maximum Sharpe ratio is the one that offers the best risk-adjusted return, meaning it provides the highest return for the least amount of risk. Identifying this portfolio is important because it helps investors optimize their asset allocation by choosing the portfolio that maximizes returns relative to the level of risk they are willing to take on. This ensures that the investor is receiving the best possible reward for their investment risk.
+
+#### Code
+``` python
+max_sharpee_idx = np.argmax(results[2])
+max_sharpee_return = results[0, max_sharpee_idx]
+max_sharpee_volatility = results[1, max_sharpee_idx]
+max_sharpee_ratio = results[2, max_sharpee_idx]
+
+max_sharpee_return, max_sharpee_volatility, max_sharpee_ratio
+```
+
+#### Insights
+
+The portfolio with the maximum Sharpe ratio has the following characteristics:
+
+**Expected Return**: 26.08%  
+**Volatility**: ~15.54%  
+**Sharpe Ratio**: ~1.68
+
+### identifying the weights of the stocks in the portfolio that yield the maximum Sharpe ratio
+
+#### Code
+``` python
+max_sharpee_weights = np.zeros(len(df_tickers))
+
+for i in range(num_portfolios):
+    weights = np.random.random(len(df_tickers))
+    weights /= np.sum(weights)
+
+    portfolio_return, portfolio_volatility = portfolio_performance(weights, expected_returns, cov_matrix)
+
+    if results[2, i] == max_sharpee_ratio:
+        max_sharpee_weights = weights
+        break
+
+portfolio_weights_df = pd.DataFrame({
+    'Ticker': df_tickers,
+    'Weight': max_sharpee_weights
+})
+
+portfolio_weights_df
+```
+
+### Results
+
+|**Ticker**|  **weight** 
+|----------|----------|
+| HDFCBANK.NS | 0.150016 |
+|INFY.NS |0.135278 |
+| RELIANCE.NS	| 0.337379 | 
+| TCS.NS	 | 0.377326 | 
+
+### Key Insights
+
+The diversified portfolio has the following allocations:
+
+**HDFCBANK: (30.85%)  
+INFY: (10.59%)  
+RELIANCE: (18.02%)  
+TCS: (40.53%)**   
+
+TCS has the largest allocation, highlighting its key role in driving the portfolio's performance, while INFY has the smallest allocation, reflecting a lower expected contribution. This balanced allocation strategy seeks to maximize returns while minimizing risk by capitalizing on the individual performances of the stocks and their correlations, ensuring the portfolio is well-diversified and less exposed to the volatility of any single stock.
