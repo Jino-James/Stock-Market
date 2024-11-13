@@ -84,14 +84,14 @@ for ticker in df_tickers:
 
 #### Results
 
-![HDFC BANK- Averages](Images\graphs1.png)
-![HDFC BANK- Volume](Images\graphs2.png)
-![INFY- Averages](Images\graphs3.png)
-![INFY- Volume](Images\graphs4.png)
-![Reliance- Averages](Images\graphs5.png)
-![Reliance- volume](Images\graphs6.png)
-![TCS- Averages](Images\graphs7.png)
-![TCS- Volume](Images\graphs8.png)
+![HDFC BANK- Averages](Images/graphs1.png)
+![HDFC BANK- Volume](Images/graphs2.png)
+![INFY- Averages](Images/graphs3.png)
+![INFY- Volume](Images/graphs4.png)
+![Reliance- Averages](Images/graphs5.png)
+![Reliance- volume](Images/graphs6.png)
+![TCS- Averages](Images/graphs7.png)
+![TCS- Volume](Images/graphs8.png)
 
 #### Key Insights
 
@@ -124,7 +124,7 @@ plt.show()
 
 #### Results
 
-![Distribution of Daily Returns](Images\Distribution_of_Daily_returns.png)
+![Distribution of Daily Returns](Images/Distribution_of_Daily_returns.png)
 
 #### Key Insights
 
@@ -152,7 +152,7 @@ plt.show()
 ```
 
 #### Results
-![Correlation Between Stocks](Images\Correlation.png)
+![Correlation Between Stocks](Images/Correlation.png)
 
 #### Key Insights 
 
